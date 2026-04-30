@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22.22.2'
 
       # 3. Cài đủ dependencies (bao gồm devDependencies để build được)
       - name: Install all dependencies
