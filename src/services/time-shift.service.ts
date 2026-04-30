@@ -1,8 +1,16 @@
 import { Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { TimeShift } from '../entity/TimeShift';
+import { User } from '../entity/User';
 
 const repo = () => AppDataSource.getRepository(TimeShift);
+const userRepo = () => AppDataSource.getRepository(User);
+
+/** Lấy FB_PSID của user theo USER_CD — dùng để gửi Messenger */
+export const getFbPsid = async (userCd: string): Promise<string | null> => {
+  const user = await userRepo().findOne({ where: { USER_CD: userCd }, select: ['FB_PSID'] });
+  return user?.FB_PSID ?? null;
+};
 
 /** Format phút → "Xh Ym" */
 export const formatMinutes = (totalMin: number): string => {

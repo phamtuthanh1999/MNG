@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as svc from '../services/time-shift.service';
+import { sendTextMessage } from '../services/messenger.service';
 
 /** Lấy USER_CD từ JWT đã decode, fallback sang query param */
 const getUserCd = (req: Request): string | null =>
@@ -42,6 +43,14 @@ export const create = async (req: Request, res: Response) => {
       NOTE: NOTE ?? null,
       USER_LOGIN: (req as any).user?.username || null,
     });
+
+    // Gửi thông báo Messenger (fire & forget, không block response)
+    svc.getFbPsid(userCd).then(psid => {
+      if (psid) {
+        const msg = `✅ Đã thêm ca: ${SHIFT_NM}\nNgày: ${SHIFT_DATE}\nGiờ: ${START_TIME} – ${END_TIME}`;
+        sendTextMessage(psid, msg).catch(() => {});
+      }
+    }).catch(() => {});
 
     return res.status(201).json({ success: true, message: 'Tạo ca thành công', data: shift });
   } catch (err: any) {
@@ -110,6 +119,21 @@ export const update = async (req: Request, res: Response) => {
       ...(NOTE !== undefined && { NOTE }),
       USER_LOGIN: (req as any).user?.username || existing.USER_LOGIN,
     });
+
+    // Gửi thông báo Messenger (fire & forget)
+    const userCd = getUserCd(req);
+    if (userCd) {
+      svc.getFbPsid(userCd).then(psid => {
+        if (psid && updated) {
+          const nm = updated.SHIFT_NM;
+          const dt = updated.SHIFT_DATE;
+          const st = updated.START_TIME;
+          const en = updated.END_TIME;
+          const msg = `✏️ Đã sửa ca: ${nm}\nNgày: ${dt}\nGiờ: ${st} – ${en}`;
+          sendTextMessage(psid, msg).catch(() => {});
+        }
+      }).catch(() => {});
+    }
 
     return res.json({ success: true, message: 'Cập nhật ca thành công', data: updated });
   } catch (err: any) {

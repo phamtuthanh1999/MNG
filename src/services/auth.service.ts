@@ -113,3 +113,14 @@ export const getUserById = async (id: number) => {
   return userWithoutPassword;
 };
 
+/**
+ * Cập nhật FB_PSID cho user theo USERNAME
+ */
+export const updateFbPsid = async (username: string, fbPsid: string): Promise<boolean> => {
+  const result = await userRepo().update(
+    { USERNAME: username, IS_ACTIVE: true },
+    { FB_PSID: fbPsid }
+  );
+  return (result.affected ?? 0) > 0;
+};
+

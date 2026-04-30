@@ -47,6 +47,9 @@ export class User {
     @Column({ type: 'boolean', default: true })
     IS_ACTIVE!: boolean; // Trạng thái hoạt động
 
+    @Column({ type: 'varchar', length: 64, nullable: true, default: null })
+    FB_PSID!: string | null; // Facebook Page-Scoped ID để gửi Messenger
+
     @CreateDateColumn()
     CREATED_DT!: Date; // Ngày tạo
 

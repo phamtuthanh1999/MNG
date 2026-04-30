@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { sendTextMessage } from "../services/messenger.service";
+import { updateFbPsid } from "../services/auth.service";
 
 /**
  * Webhook Controller - Xử lý webhook callback từ Facebook
@@ -62,16 +63,34 @@ export const receiveWebhook = (req: Request, res: Response) => {
 
 /**
  * Xử lý tin nhắn từ người dùng
+ * Nếu tin nhắn bắt đầu bằng "/login <username>" thì liên kết PSID với user
  */
 async function handleMessage(senderId: string, message: any) {
-  const text = message.text;
+  const text: string = (message.text || '').trim();
   console.log(`💬 Message from ${senderId}: ${text}`);
 
   try {
-    await sendTextMessage(senderId, "Tôi sẽ phản hồi sớm tới bạn!!!1");
+    // Lệnh liên kết: /login <username>
+    const loginMatch = text.match(/^\/login\s+(\S+)$/i);
+    if (loginMatch) {
+      const username = loginMatch[1];
+      const updated = await updateFbPsid(username, senderId);
+      if (updated) {
+        await sendTextMessage(senderId, `✅ Đã liên kết tài khoản "${username}" thành công!\nTừ giờ bạn sẽ nhận thông báo ca làm việc qua Messenger.`);
+      } else {
+        await sendTextMessage(senderId, `❌ Không tìm thấy tài khoản "${username}". Kiểm tra lại tên đăng nhập và thử lại.`);
+      }
+      return;
+    }
+
+    // Hướng dẫn mặc định
+    await sendTextMessage(
+      senderId,
+      `Xin chào! 👋\n\nĐể nhận thông báo ca làm việc, gửi lệnh:\n🔑 /login <tên đăng nhập>\n\nVí dụ: /login admin`
+    );
     console.log(`✅ Replied to ${senderId}`);
   } catch (err) {
-    console.error(`❌ Failed to send reply to ${senderId}:`, err);
+    console.error(`❌ Failed to reply to ${senderId}:`, err);
   }
 }
 
