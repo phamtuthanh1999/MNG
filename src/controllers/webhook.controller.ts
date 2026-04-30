@@ -68,7 +68,7 @@ async function handleMessage(senderId: string, message: any) {
   console.log(`💬 Message from ${senderId}: ${text}`);
 
   try {
-    await sendTextMessage(senderId, "Tôi sẽ phản hồi sớm tới bạn!!!");
+    await sendTextMessage(senderId, "Tôi sẽ phản hồi sớm tới bạn!!!1");
     console.log(`✅ Replied to ${senderId}`);
   } catch (err) {
     console.error(`❌ Failed to send reply to ${senderId}:`, err);
