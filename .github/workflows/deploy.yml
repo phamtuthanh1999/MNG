@@ -1,0 +1,71 @@
+name: Deploy MNG API to cPanel
+
+# Trigger: mỗi khi push lên branch main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Cài Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      # 3. Cài đủ dependencies (bao gồm devDependencies để build được)
+      - name: Install all dependencies
+        run: npm ci
+
+      # 4. Build TypeScript → dist/
+      - name: Build TypeScript
+        run: npm run build
+
+      # 5. Tạo thư mục staging chứa đúng những gì cần upload
+      - name: Prepare staging directory
+        run: |
+          mkdir -p staging
+          # Copy compiled code
+          cp -r dist staging/
+          # Copy production package.json
+          cp package.json staging/
+          # Cài production-only node_modules vào staging
+          cd staging && npm install --omit=dev --no-package-lock
+          # Tạo file restart.txt để Passenger tự restart app sau khi deploy
+          mkdir -p staging/tmp
+          touch staging/tmp/restart.txt
+
+      # 6. Upload qua FTP lên cPanel
+      # ──────────────────────────────────────────────────
+      # Chỉ cần thêm 2 secrets trong GitHub repo:
+      #   Settings → Secrets and variables → Actions → New repository secret
+      #
+      #   FTP_PASSWORD    : password FTP cPanel
+      #   FTP_SERVER_DIR  : đường dẫn thư mục app trên server
+      #                     (vd: /home/pttiovn/nodejs_app/)
+      # ──────────────────────────────────────────────────
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftp.ptt.io.vn
+          port: 21
+          username: pttiovn@api.ptt.io.vn
+          password: 9sN2hgkP@DayP6S
+          local-dir: ./staging/
+          server-dir: /home/pttiovn/BE_MNG/
+          # Bỏ qua các file không cần thiết
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/.cache/**
+            **/*.map
