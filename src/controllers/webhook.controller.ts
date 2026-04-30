@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sendTextMessage } from "../services/messenger.service";
-import { updateFbPsid } from "../services/auth.service";
+import { updateFbPsid, getAdminBySenderId, unlinkFbPsid } from "../services/auth.service";
 
 /**
  * Webhook Controller - Xử lý webhook callback từ Facebook
@@ -74,11 +74,35 @@ async function handleMessage(senderId: string, message: any) {
     const loginMatch = text.match(/^\/login\s+(\S+)$/i);
     if (loginMatch) {
       const username = loginMatch[1];
-      const updated = await updateFbPsid(username, senderId);
-      if (updated) {
+      const result = await updateFbPsid(username, senderId);
+      if (result.ok) {
         await sendTextMessage(senderId, `✅ Đã liên kết tài khoản "${username}" thành công!\nTừ giờ bạn sẽ nhận thông báo ca làm việc qua Messenger.`);
-      } else {
+      } else if (result.reason === 'user_not_found') {
         await sendTextMessage(senderId, `❌ Không tìm thấy tài khoản "${username}". Kiểm tra lại tên đăng nhập và thử lại.`);
+      } else if (result.reason === 'user_already_linked') {
+        await sendTextMessage(senderId, `⚠️ Tài khoản "${username}" đã liên kết với một Messenger khác.\nMỗi tài khoản chỉ được liên kết với 1 Facebook.`);
+      } else if (result.reason === 'psid_taken') {
+        await sendTextMessage(senderId, `⚠️ Messenger này đã được liên kết với tài khoản khác.\nMỗi Facebook chỉ được liên kết với 1 tài khoản.`);
+      }
+      return;
+    }
+
+    // Lệnh ADMIN xóa liên kết: ADM delete FB <username>
+    const admDeleteMatch = text.match(/^ADM\s+delete\s+FB\s+(\S+)$/i);
+    if (admDeleteMatch) {
+      const admin = await getAdminBySenderId(senderId);
+      if (!admin) {
+        await sendTextMessage(senderId, `❌ Bạn không có quyền thực hiện lệnh này.`);
+        return;
+      }
+      const targetUsername = admDeleteMatch[1];
+      const result = await unlinkFbPsid(targetUsername);
+      if (result === 'unlinked') {
+        await sendTextMessage(senderId, `✅ Đã xóa liên kết Facebook của tài khoản "${targetUsername}" thành công.`);
+      } else if (result === 'not_found') {
+        await sendTextMessage(senderId, `❌ Không tìm thấy tài khoản "${targetUsername}".`);
+      } else {
+        await sendTextMessage(senderId, `ℹ️ Tài khoản "${targetUsername}" chưa liên kết Facebook nào.`);
       }
       return;
     }

@@ -116,11 +116,48 @@ export const getUserById = async (id: number) => {
 /**
  * Cập nhật FB_PSID cho user theo USERNAME
  */
-export const updateFbPsid = async (username: string, fbPsid: string): Promise<boolean> => {
-  const result = await userRepo().update(
-    { USERNAME: username, IS_ACTIVE: true },
-    { FB_PSID: fbPsid }
-  );
-  return (result.affected ?? 0) > 0;
+export type LinkFbResult =
+  | { ok: true }
+  | { ok: false; reason: 'user_not_found' }
+  | { ok: false; reason: 'user_already_linked'; linkedPsid: string }
+  | { ok: false; reason: 'psid_taken'; takenBy: string };
+
+export const updateFbPsid = async (username: string, fbPsid: string): Promise<LinkFbResult> => {
+  // Kiểm tra user tồn tại
+  const user = await userRepo().findOne({ where: { USERNAME: username, IS_ACTIVE: true } });
+  if (!user) return { ok: false, reason: 'user_not_found' };
+
+  // Kiểm tra user đã liên kết FB_PSID khác chưa
+  if (user.FB_PSID && user.FB_PSID !== fbPsid) {
+    return { ok: false, reason: 'user_already_linked', linkedPsid: user.FB_PSID };
+  }
+
+  // Kiểm tra PSID này đã thuộc về tài khoản khác chưa
+  const existing = await userRepo().findOne({ where: { FB_PSID: fbPsid } });
+  if (existing && existing.USERNAME !== username) {
+    return { ok: false, reason: 'psid_taken', takenBy: existing.USERNAME };
+  }
+
+  // Đã liên kết rồi (cùng PSID)
+  if (user.FB_PSID === fbPsid) return { ok: true };
+
+  await userRepo().update({ USERNAME: username }, { FB_PSID: fbPsid });
+  return { ok: true };
+};
+
+/** Lấy user ADMIN theo FB_PSID (senderId) — dùng xác minh quyền qua Messenger */
+export const getAdminBySenderId = async (senderId: string): Promise<User | null> => {
+  const user = await userRepo().findOne({ where: { FB_PSID: senderId, IS_ACTIVE: true } });
+  if (!user || user.ROLE_CD !== 'ADMIN') return null;
+  return user;
+};
+
+/** Xóa liên kết FB_PSID của một user theo username */
+export const unlinkFbPsid = async (username: string): Promise<'unlinked' | 'not_found' | 'no_link'> => {
+  const user = await userRepo().findOne({ where: { USERNAME: username, IS_ACTIVE: true } });
+  if (!user) return 'not_found';
+  if (!user.FB_PSID) return 'no_link';
+  await userRepo().update({ USERNAME: username }, { FB_PSID: null });
+  return 'unlinked';
 };
 

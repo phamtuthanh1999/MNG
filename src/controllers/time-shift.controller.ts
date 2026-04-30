@@ -123,13 +123,31 @@ export const update = async (req: Request, res: Response) => {
     // Gửi thông báo Messenger (fire & forget)
     const userCd = getUserCd(req);
     if (userCd) {
+      // Lưu thời gian cũ trước khi gửi message
+      const oldDate = existing.SHIFT_DATE;
+      const oldStart = existing.START_TIME;
+      const oldEnd = existing.END_TIME;
       svc.getFbPsid(userCd).then(psid => {
         if (psid && updated) {
           const nm = updated.SHIFT_NM;
-          const dt = updated.SHIFT_DATE;
-          const st = updated.START_TIME;
-          const en = updated.END_TIME;
-          const msg = `✏️ Đã sửa ca: ${nm}\nNgày: ${dt}\nGiờ: ${st} – ${en}`;
+          const newDate = updated.SHIFT_DATE;
+          const newStart = updated.START_TIME;
+          const newEnd = updated.END_TIME;
+
+          const dateChanged = oldDate !== newDate;
+          const timeChanged = oldStart !== newStart || oldEnd !== newEnd;
+
+          let msg = `✏️ Đã sửa ca: ${nm}\n`;
+          if (dateChanged) {
+            msg += `Ngày: ${oldDate} → ${newDate}\n`;
+          } else {
+            msg += `Ngày: ${newDate}\n`;
+          }
+          if (timeChanged) {
+            msg += `Giờ cũ: ${oldStart} – ${oldEnd}\nGiờ mới: ${newStart} – ${newEnd}`;
+          } else {
+            msg += `Giờ: ${newStart} – ${newEnd}`;
+          }
           sendTextMessage(psid, msg).catch(() => {});
         }
       }).catch(() => {});
