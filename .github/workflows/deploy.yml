@@ -20,39 +20,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
-      # 3. Cache node_modules theo package-lock.json
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # 4. Cài đủ dependencies (bao gồm devDependencies để build được)
+      # 3. Cài đủ dependencies (bao gồm devDependencies để build được)
       - name: Install all dependencies
         run: npm ci
 
-      # 5. Build TypeScript → dist/
+      # 4. Build TypeScript → dist/
       - name: Build TypeScript
         run: npm run build
 
-      # 6. Tạo thư mục staging chứa đúng những gì cần upload
+      # 5. Tạo thư mục staging chứa đúng những gì cần upload
       - name: Prepare staging directory
         run: |
           mkdir -p staging
           # Copy compiled code
           cp -r dist staging/
-          # Copy package.json + lock để prune hoạt động đúng
+          # Copy package.json + lock (cPanel sẽ tự chạy npm install)
           cp package.json package-lock.json staging/
-          # Copy node_modules sẵn có rồi prune devDeps (nhanh hơn install lại)
-          cp -r node_modules staging/
-          cd staging && npm prune --omit=dev
           # Tạo file restart.txt để Passenger tự restart app sau khi deploy
-          mkdir -p tmp && touch tmp/restart.txt
+          mkdir -p staging/tmp && touch staging/tmp/restart.txt
 
       # 6. Upload qua FTP lên cPanel
       # ──────────────────────────────────────────────────
