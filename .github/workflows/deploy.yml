@@ -57,7 +57,7 @@ jobs:
           username: pttiovn@api.ptt.io.vn
           password: 9sN2hgkP@DayP6S
           local-dir: ./staging/
-          server-dir: /home/pttiovn/BE_MNG/
+          server-dir: ''
           state-name: .ftp-deploy-sync-state-v2.json
           # Bỏ qua các file không cần thiết
           # node_modules sẽ được cPanel tự install - không upload, không xóa
