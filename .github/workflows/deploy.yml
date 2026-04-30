@@ -57,7 +57,7 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.ptt.io.vn
+          server: 103.200.23.139
           port: 21
           username: pttiovn@api.ptt.io.vn
           password: 9sN2hgkP@DayP6S
