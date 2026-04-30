@@ -59,8 +59,9 @@ jobs:
           local-dir: ./staging/
           server-dir: /home/pttiovn/BE_MNG/
           # Bỏ qua các file không cần thiết
+          # node_modules sẽ được cPanel tự install - không upload, không xóa
           exclude: |
             **/.git*
             **/.git*/**
-            **/node_modules/.cache/**
+            **/node_modules/**
             **/*.map
