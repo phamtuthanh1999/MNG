@@ -1,0 +1,144 @@
+{
+	"info": {
+		"name": "Comm API Tests",
+		"description": "Collection để test các API của đơn vị (Master Common)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Comm",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"UN_CD\": \"CAI\",\n  \"UN_NM\": \"Cái\",\n  \"UN_TP\": \"UNIT\",\n  \"IS_ACTIVE\": true,\n  \"DESCRIPTION\": \"Đơn vị tính cái\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/comms",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms"]
+				}
+			}
+		},
+		{
+			"name": "Get All Comms",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/comms",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms"]
+				}
+			}
+		},
+		{
+			"name": "Get Active Comms",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/comms/active",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms", "active"]
+				}
+			}
+		},
+		{
+			"name": "Get Comm by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/comms/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms", "1"]
+				}
+			}
+		},
+		{
+			"name": "Update Comm",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"UN_NM\": \"Đơn vị đã cập nhật\",\n  \"DESCRIPTION\": \"Mô tả đã được cập nhật\",\n  \"IS_ACTIVE\": true\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/comms/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms", "1"]
+				}
+			}
+		},
+		{
+			"name": "Search Comms",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/comms/search?keyword=cái",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms", "search"],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "cái"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "Delete Comm",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/comms/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms", "1"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "token",
+			"value": "your-jwt-token-here"
+		},
+		{
+			"key": "globalToken",
+			"value": "use-global-auth-collection-to-set"
+		}
+	]
+}

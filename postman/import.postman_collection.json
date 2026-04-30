@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "Import Management API",
+    "description": "API collection for testing Import and Import Detail management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1234567890"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Import Management",
+      "item": [
+        {
+          "name": "Create Import",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IMPORT_CD\": \"IMP001\",\n  \"STORE_CD\": \"STORE001\",\n  \"IMPORT_DT\": \"2024-03-10T08:00:00Z\",\n  \"NOTE\": \"Nhập hàng tháng 3\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imports",
+              "host": ["{{base_url}}"],
+              "path": ["imports"]
+            }
+          }
+        },
+        {
+          "name": "Get All Imports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports",
+              "host": ["{{base_url}}"],
+              "path": ["imports"]
+            }
+          }
+        },
+        {
+          "name": "Get Import by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "1"]
+            }
+          }
+        },
+        {
+          "name": "Search Imports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/search?keyword=IMP",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "search"],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "IMP"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Import",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IMPORT_CD\": \"IMP001_UPDATED\",\n  \"STORE_CD\": \"STORE001\",\n  \"IMPORT_DT\": \"2024-03-10T08:00:00Z\",\n  \"NOTE\": \"Nhập hàng tháng 3 - đã cập nhật\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imports/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Import",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Import Detail Management",
+      "item": [
+        {
+          "name": "Create Import Detail",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IMPORT_ID\": 1,\n  \"PD_CD\": \"PD001\",\n  \"UNIT_CD\": \"PCS\",\n  \"QUANTITY\": 100,\n  \"PRICE\": 50000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imports/details",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "details"]
+            }
+          }
+        },
+        {
+          "name": "Get Import Details by Import ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/1/details",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "1", "details"]
+            }
+          }
+        },
+        {
+          "name": "Get Import Detail by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/details/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "details", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Import Detail",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PD_CD\": \"PD001_UPDATED\",\n  \"UNIT_CD\": \"PCS\",\n  \"QUANTITY\": 150,\n  \"PRICE\": 55000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imports/details/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "details", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Import Detail",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imports/details/1",
+              "host": ["{{base_url}}"],
+              "path": ["imports", "details", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

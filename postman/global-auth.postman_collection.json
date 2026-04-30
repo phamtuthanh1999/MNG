@@ -1,0 +1,169 @@
+{
+	"info": {
+		"name": "Global Auth Management",
+		"description": "Collection để quản lý authentication global - set token cho tất cả collections khác",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Set Global Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Set token global để sử dụng cho tất cả collections",
+							"if (pm.response.code === 200) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data && responseJson.data.token) {",
+							"        // Set global variable",
+							"        pm.globals.set('globalToken', responseJson.data.token);",
+							"        ",
+							"        // Set collection variable cho collection hiện tại",
+							"        pm.collectionVariables.set('token', responseJson.data.token);",
+							"        ",
+							"        console.log('✅ Global Token đã được set:', responseJson.data.token);",
+							"        console.log('✅ User info:', responseJson.data.user);",
+							"        console.log('✅ Token có thể sử dụng trong tất cả collections với {{globalToken}}');",
+							"        ",
+							"        // Test để verify token được set",
+							"        pm.test('Global token được set thành công', function () {",
+							"            pm.expect(pm.globals.get('globalToken')).to.not.be.undefined;",
+							"            pm.expect(pm.globals.get('globalToken')).to.have.lengthOf.above(10);",
+							"        });",
+							"        ",
+							"        pm.test('User login thành công', function () {",
+							"            pm.expect(responseJson.success).to.be.true;",
+							"            pm.expect(responseJson.data.user).to.not.be.undefined;",
+							"        });",
+							"    } else {",
+							"        console.log('❌ Không thể lấy token từ response');",
+							"    }",
+							"} else {",
+							"    console.log('❌ Login failed với status code:', pm.response.code);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"login\": \"{{globalUsername}}\",\n  \"password\": \"{{globalPassword}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "auth", "login"]
+				},
+				"description": "Login và set global token để sử dụng trong tất cả collections khác"
+			}
+		},
+		{
+			"name": "Clear Global Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Clear global token",
+							"pm.globals.unset('globalToken');",
+							"pm.collectionVariables.unset('token');",
+							"",
+							"console.log('✅ Global token đã được xóa');",
+							"",
+							"pm.test('Global token đã được xóa', function () {",
+							"    pm.expect(pm.globals.get('globalToken')).to.be.undefined;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/me",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "auth", "me"]
+				},
+				"description": "Clear global token - chỉ là endpoint dummy để trigger clear script"
+			}
+		},
+		{
+			"name": "Verify Global Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verify global token hoạt động",
+							"if (pm.response.code === 200) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data) {",
+							"        console.log('✅ Global token hoạt động tốt');",
+							"        console.log('✅ Current user:', responseJson.data);",
+							"        ",
+							"        pm.test('Global token hợp lệ', function () {",
+							"            pm.expect(responseJson.success).to.be.true;",
+							"            pm.expect(responseJson.data).to.not.be.undefined;",
+							"        });",
+							"    }",
+							"} else {",
+							"    console.log('❌ Global token không hợp lệ hoặc đã hết hạn');",
+							"    console.log('❌ Response code:', pm.response.code);",
+							"    ",
+							"    pm.test('Global token cần refresh', function () {",
+							"        pm.expect(pm.response.code).to.not.eql(401);",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/me",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "auth", "me"]
+				},
+				"description": "Verify global token có hoạt động không"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "globalUsername",
+			"value": "admin"
+		},
+		{
+			"key": "globalPassword",
+			"value": "123456"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

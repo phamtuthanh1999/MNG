@@ -1,0 +1,343 @@
+{
+  "info": {
+    "name": "Auto Code Generation Tests",
+    "description": "Test API endpoints để kiểm tra việc tự động tạo code cho các trường *_CD",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Test Auto Generate Product Code (PD_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has PD_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('PD_CD');",
+              "    pm.expect(jsonData.PD_CD).to.match(/^PD\\d{4}$/);",
+              "    console.log('Generated Product Code:', jsonData.PD_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"PD_NM\": \"Test Product Auto Code\",\n  \"STORE_ID\": \"ST0001\",\n  \"QUANTITY\": 10,\n  \"UNIT_CD\": \"UN0001\",\n  \"DESCRIPTION\": \"Test tự động tạo mã sản phẩm\",\n  \"IMG_URL\": \"https://example.com/image.jpg\",\n  \"USER_LOGIN\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Test Auto Generate Store Code (STORE_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has STORE_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('STORE_CD');",
+              "    pm.expect(jsonData.STORE_CD).to.match(/^ST\\d{4}$/);",
+              "    console.log('Generated Store Code:', jsonData.STORE_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"STORE_NM\": \"Test Store Auto Code\",\n  \"STORE_TYPE\": \"RETAIL\",\n  \"ADDRESS\": \"123 Test Street\",\n  \"PHONE\": \"0123456789\",\n  \"IS_ACTIVE\": true,\n  \"CREATED_BY\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/stores",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "stores"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Test Auto Generate Import Code (IMPORT_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has IMPORT_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('IMPORT_CD');",
+              "    pm.expect(jsonData.IMPORT_CD).to.match(/^IM\\d{4}$/);",
+              "    console.log('Generated Import Code:', jsonData.IMPORT_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"STORE_CD\": \"ST0001\",\n  \"IMPORT_DT\": \"2026-03-12T10:00:00.000Z\",\n  \"NOTE\": \"Test tự động tạo mã phiếu nhập\",\n  \"CREATED_BY\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/imports",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "imports"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Test Auto Generate Export Code (EXPORT_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has EXPORT_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('EXPORT_CD');",
+              "    pm.expect(jsonData.EXPORT_CD).to.match(/^EX\\d{4}$/);",
+              "    console.log('Generated Export Code:', jsonData.EXPORT_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"STORE_CD\": \"ST0001\",\n  \"EXPORT_DT\": \"2026-03-12T10:00:00.000Z\",\n  \"NOTE\": \"Test tự động tạo mã phiếu xuất\",\n  \"CREATED_BY\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/exports",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "exports"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Test Auto Generate Unit Code (UN_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has UN_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('UN_CD');",
+              "    pm.expect(jsonData.UN_CD).to.match(/^UN\\d{4}$/);",
+              "    console.log('Generated Unit Code:', jsonData.UN_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"UN_NM\": \"Test Unit Auto Code\",\n  \"UN_TP\": \"WEIGHT\",\n  \"IS_ACTIVE\": true,\n  \"DESCRIPTION\": \"Test tự động tạo mã đơn vị\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/comm/units",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "comm",
+            "units"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Test Auto Generate User Code (USER_CD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has USER_CD auto generated', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('USER_CD');",
+              "    pm.expect(jsonData.USER_CD).to.match(/^US\\d{4}$/);",
+              "    console.log('Generated User Code:', jsonData.USER_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"USERNAME\": \"testuser_autocode\",\n  \"PASSWORD\": \"password123\",\n  \"FULL_NAME\": \"Test User Auto Code\",\n  \"EMAIL\": \"testuser@example.com\",\n  \"PHONE\": \"0123456789\",\n  \"ROLE_CD\": \"USER\",\n  \"IS_ACTIVE\": true,\n  \"CREATED_BY\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Verify Multiple Product Codes Sequential",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Verify sequential code generation', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('PD_CD');",
+              "    pm.expect(jsonData.PD_CD).to.match(/^PD\\d{4}$/);",
+              "    ",
+              "    // Store the generated code for comparison",
+              "    pm.globals.set('last_product_code', jsonData.PD_CD);",
+              "    console.log('Sequential Product Code:', jsonData.PD_CD);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"PD_NM\": \"Sequential Product Test {{$randomInt}}\",\n  \"STORE_ID\": \"ST0001\",\n  \"QUANTITY\": 5,\n  \"UNIT_CD\": \"UN0001\",\n  \"DESCRIPTION\": \"Test sequential code generation\",\n  \"USER_LOGIN\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}

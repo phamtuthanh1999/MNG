@@ -1,0 +1,127 @@
+{
+	"info": {
+		"name": "UserStore API Tests",
+		"description": "Collection để test các API của liên kết user-store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Assign User to Store",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"USER_CD\": \"USER001\",\n  \"STORE_CD\": \"CH001\",\n  \"ROLE_STORE\": \"MANAGER\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-stores",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "user-stores"]
+				}
+			}
+		},
+		{
+			"name": "Get All UserStores",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-stores",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "user-stores"]
+				}
+			}
+		},
+		{
+			"name": "Get UserStore by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-stores/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "user-stores", "1"]
+				}
+			}
+		},
+		{
+			"name": "Get User Stores",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/users/USER001/stores",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "users", "USER001", "stores"]
+				}
+			}
+		},
+		{
+			"name": "Update User Role in Store",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"ROLE_STORE\": \"STAFF\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-stores/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "user-stores", "1"]
+				}
+			}
+		},
+		{
+			"name": "Remove User from Store",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-stores/1",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "user-stores", "1"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "token",
+			"value": "your-jwt-token-here"
+		},
+		{
+			"key": "globalToken",
+			"value": "use-global-auth-collection-to-set"
+		}
+	]
+}

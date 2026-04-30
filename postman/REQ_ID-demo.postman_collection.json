@@ -1,0 +1,225 @@
+{
+	"info": {
+		"name": "REQ_ID Demo Collection",
+		"description": "Collection demo để test việc tự động set REQ_ID từ thông tin user đăng nhập",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Set global token thay vì collection variable",
+							"if (pm.response.code === 200) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data && responseJson.data.token) {",
+							"        pm.globals.set('globalToken', responseJson.data.token);",
+							"        console.log('Token đã được set:', responseJson.data.token);",
+							"        console.log('User info:', responseJson.data.user);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"login\": \"admin\", \n  \"password\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "auth", "login"]
+				}
+			}
+		},
+		{
+			"name": "2. Create Comm (REQ_ID auto từ user)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Kiểm tra response có REQ_ID được set từ user không",
+							"if (pm.response.code === 201) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data) {",
+							"        console.log('Created Comm:', responseJson.data);",
+							"        console.log('REQ_ID được set tự động:', responseJson.data.REQ_ID);",
+							"        ",
+							"        // Test: REQ_ID phải là USERNAME của user đăng nhập",
+							"        pm.test('REQ_ID được set từ user đăng nhập', function () {",
+							"            pm.expect(responseJson.data.REQ_ID).to.eql('admin');",
+							"        });",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"UN_CD\": \"DEMO01\",\n  \"UN_NM\": \"Demo Unit\",\n  \"UN_TP\": \"UNIT\",\n  \"IS_ACTIVE\": true,\n  \"DESCRIPTION\": \"Đơn vị demo để test REQ_ID\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/comms",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "comms"]
+				}
+			}
+		},
+		{
+			"name": "3. Create Product (REQ_ID & USER_LOGIN auto)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Kiểm tra response có REQ_ID và USER_LOGIN được set từ user không",
+							"if (pm.response.code === 201) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data) {",
+							"        console.log('Created Product:', responseJson.data);",
+							"        console.log('REQ_ID được set tự động:', responseJson.data.REQ_ID);",
+							"        console.log('USER_LOGIN được set tự động:', responseJson.data.USER_LOGIN);",
+							"        ",
+							"        // Test: REQ_ID và USER_LOGIN phải là USERNAME của user đăng nhập",
+							"        pm.test('REQ_ID được set từ user đăng nhập', function () {",
+							"            pm.expect(responseJson.data.REQ_ID).to.eql('admin');",
+							"        });",
+							"        ",
+							"        pm.test('USER_LOGIN được set từ user đăng nhập', function () {",
+							"            pm.expect(responseJson.data.USER_LOGIN).to.eql('admin');",
+							"        });",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"PD_CD\": \"DEMO_SP001\",\n  \"PD_NM\": \"Demo Product\",\n  \"STORE_ID\": \"DEMO_STORE\",\n  \"QUANTITY\": 100,\n  \"UNIT_CD\": \"DEMO01\",\n  \"DESCRIPTION\": \"Sản phẩm demo để test REQ_ID và USER_LOGIN\",\n  \"IMG_URL\": \"https://example.com/demo.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/products",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "products"]
+				}
+			}
+		},
+		{
+			"name": "4. Create Store (CREATED_BY auto)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Kiểm tra response có CREATED_BY được set từ user không",
+							"if (pm.response.code === 201) {",
+							"    const responseJson = pm.response.json();",
+							"    if (responseJson.success && responseJson.data) {",
+							"        console.log('Created Store:', responseJson.data);",
+							"        console.log('CREATED_BY được set tự động:', responseJson.data.CREATED_BY);",
+							"        ",
+							"        // Test: CREATED_BY phải là USERNAME của user đăng nhập",
+							"        pm.test('CREATED_BY được set từ user đăng nhập', function () {",
+							"            pm.expect(responseJson.data.CREATED_BY).to.eql('admin');",
+							"        });",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"STORE_CD\": \"DEMO_STORE\",\n  \"STORE_NM\": \"Demo Store\",\n  \"STORE_TYPE\": \"MAIN\",\n  \"ADDRESS\": \"Demo Address\",\n  \"PHONE\": \"0900000000\",\n  \"IS_ACTIVE\": true\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/stores",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "stores"]
+				}
+			}
+		},
+		{
+			"name": "5. User Current Info (để verify username)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{globalToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/me",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "auth", "me"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "globalToken",
+			"value": "set-by-login-request"
+		}
+	]
+}

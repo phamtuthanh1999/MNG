@@ -1,0 +1,349 @@
+{
+	"info": {
+		"name": "MNG System API - Complete Collection",
+		"description": "Collection tổng hợp tất cả API của hệ thống MNG bao gồm Product, Comm (Unit), Store và UserStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userCode\": \"ADMIN001\",\n  \"username\": \"admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"123456\",\n  \"fullName\": \"Administrator\",\n  \"phone\": \"0901234567\",\n  \"roleCode\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"login\": \"admin\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"PD_CD\": \"SP001\",\n  \"PD_NM\": \"Điện thoại iPhone\",\n  \"STORE_ID\": \"CH001\",\n  \"QUANTITY\": 50,\n  \"UNIT_CD\": \"CAI\",\n  \"DESCRIPTION\": \"Điện thoại iPhone mới nhất\",\n  \"IMG_URL\": \"https://example.com/iphone.jpg\",\n  \"USER_LOGIN\": \"admin\",\n  \"REQ_ID\": \"REQ001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/search?keyword=iPhone",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", "search"],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "iPhone"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"PD_NM\": \"Điện thoại iPhone Pro Max\",\n  \"QUANTITY\": 75,\n  \"DESCRIPTION\": \"Điện thoại iPhone Pro Max - phiên bản cao cấp\",\n  \"USER_LOGIN\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "products", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Comms (Units)",
+			"item": [
+				{
+					"name": "Create Comm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"UN_CD\": \"CAI\",\n  \"UN_NM\": \"Cái\",\n  \"UN_TP\": \"UNIT\",\n  \"IS_ACTIVE\": true,\n  \"DESCRIPTION\": \"Đơn vị tính cái - dùng cho sản phẩm rời\",\n  \"REQ_ID\": \"REQ001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comms",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comms"]
+						}
+					}
+				},
+				{
+					"name": "Get All Comms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/comms",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comms"]
+						}
+					}
+				},
+				{
+					"name": "Get Active Comms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/comms/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comms", "active"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Stores",
+			"item": [
+				{
+					"name": "Create Store",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"STORE_CD\": \"CH001\",\n  \"STORE_NM\": \"Cửa hàng Quận 1\",\n  \"STORE_TYPE\": \"MAIN\",\n  \"ADDRESS\": \"123 Nguyễn Huệ, Quận 1, TP.HCM\",\n  \"PHONE\": \"0283812345\",\n  \"IS_ACTIVE\": true,\n  \"CREATED_BY\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores"]
+						}
+					}
+				},
+				{
+					"name": "Get All Stores",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores"]
+						}
+					}
+				},
+				{
+					"name": "Get Store Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stores/CH001/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores", "CH001", "users"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User-Store Relations",
+			"item": [
+				{
+					"name": "Assign User to Store",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"USER_CD\": \"USER001\",\n  \"STORE_CD\": \"CH001\",\n  \"ROLE_STORE\": \"MANAGER\",\n  \"CREATED_BY\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user-stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "user-stores"]
+						}
+					}
+				},
+				{
+					"name": "Get User Stores",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/USER001/stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "USER001", "stores"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

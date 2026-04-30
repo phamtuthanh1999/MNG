@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "Unit CRUD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Unit",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"unit_cd\": \"pcs\",\n  \"unit_nm\": \"Cái\",\n  \"factor\": \"1\",\n  \"baseUnit\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/units",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "units"]
+        }
+      }
+    },
+    {
+      "name": "List Units",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/units",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "units"]
+        }
+      }
+    },
+    {
+      "name": "Get Unit",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/units/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "units", ":id"]
+        }
+      }
+    },
+    {
+      "name": "Update Unit",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"unit_nm\": \"Chiếc\",\n  \"factor\": \"1\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/units/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "units", ":id"]
+        }
+      }
+    },
+    {
+      "name": "Delete Unit",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:3000/api/units/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "units", ":id"]
+        }
+      }
+    }
+  ]
+}
