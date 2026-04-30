@@ -23,8 +23,19 @@ const formatDateVN = (d: Date): string => {
   return `${days[d.getDay()]}, ${dd}/${mm}/${yyyy}`;
 };
 
-/** ISO date string YYYY-MM-DD */
-const isoDate = (d: Date): string => d.toISOString().slice(0, 10);
+/** ISO date string YYYY-MM-DD theo local timezone */
+const isoDate = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+/** Parse YYYY-MM-DD thành Date local (tránh UTC offset) */
+const parseLocalDate = (dateStr: string): Date => {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
 
 /** Ngày đầu tuần (Thứ Hai) của một ngày bất kỳ */
 const weekStart = (d: Date): Date => {
@@ -60,6 +71,23 @@ export const updateShift = async (id: number, data: Partial<TimeShift>) => {
 export const deleteShift = async (id: number) =>
   repo().delete(id);
 
+/** Kiểm tra trùng giờ: trả về ca đầu tiên bị overlap (bỏ qua excludeId khi sửa) */
+export const findOverlap = async (
+  userCd: string,
+  date: string,
+  startTime: string,
+  endTime: string,
+  excludeId?: number,
+): Promise<TimeShift | null> => {
+  const shifts = await repo().find({ where: { USER_CD: userCd, SHIFT_DATE: date } });
+  for (const s of shifts) {
+    if (excludeId !== undefined && s.ID === excludeId) continue;
+    // Overlap khi newStart < existingEnd VÀ newEnd > existingStart
+    if (startTime < s.END_TIME && endTime > s.START_TIME) return s;
+  }
+  return null;
+};
+
 // ─────────────────────── STATS ───────────────────────
 
 /** Tổng phút theo ngày */
@@ -70,7 +98,7 @@ export const dailyTotal = async (userCd: string, date: string): Promise<number> 
 
 /** Tổng phút theo tuần — trả về mảng 7 phần tử [Mon..Sun] */
 export const weeklyTotals = async (userCd: string, anchorDate: string): Promise<number[]> => {
-  const anchor = new Date(anchorDate);
+  const anchor = parseLocalDate(anchorDate);
   const start = weekStart(anchor);
   const results: number[] = [];
   for (let i = 0; i < 7; i++) {
@@ -96,7 +124,7 @@ export const monthlyTotals = async (userCd: string, year: number, month: number)
 
 /** Tổng hợp cho widget /api/time — dateStr tuỳ chọn, mặc định hôm nay */
 export const getTimeSummary = async (userCd: string, dateStr?: string) => {
-  const now = dateStr ? new Date(dateStr) : new Date();
+  const now = dateStr ? parseLocalDate(dateStr) : new Date();
   const targetDate = dateStr || isoDate(new Date());
 
   const shifts = await repo().find({

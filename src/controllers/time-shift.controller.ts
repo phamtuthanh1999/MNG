@@ -25,6 +25,14 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc: SHIFT_NM, SHIFT_DATE, START_TIME, END_TIME' });
     }
 
+    const overlap = await svc.findOverlap(userCd, SHIFT_DATE, START_TIME, END_TIME);
+    if (overlap) {
+      return res.status(409).json({
+        success: false,
+        message: `Trùng giờ với ca "${overlap.SHIFT_NM}" (${overlap.START_TIME}–${overlap.END_TIME})`,
+      });
+    }
+
     const shift = await svc.createShift({
       USER_CD: userCd,
       SHIFT_NM,
@@ -82,6 +90,18 @@ export const update = async (req: Request, res: Response) => {
     if (!existing) return res.status(404).json({ success: false, message: 'Không tìm thấy ca' });
 
     const { SHIFT_NM, SHIFT_DATE, START_TIME, END_TIME, NOTE } = req.body;
+
+    const checkDate = SHIFT_DATE ?? existing.SHIFT_DATE;
+    const checkStart = START_TIME ?? existing.START_TIME;
+    const checkEnd = END_TIME ?? existing.END_TIME;
+    const overlap = await svc.findOverlap(getUserCd(req)!, checkDate, checkStart, checkEnd, id);
+    if (overlap) {
+      return res.status(409).json({
+        success: false,
+        message: `Trùng giờ với ca "${overlap.SHIFT_NM}" (${overlap.START_TIME}–${overlap.END_TIME})`,
+      });
+    }
+
     const updated = await svc.updateShift(id, {
       ...(SHIFT_NM !== undefined && { SHIFT_NM }),
       ...(SHIFT_DATE !== undefined && { SHIFT_DATE }),
